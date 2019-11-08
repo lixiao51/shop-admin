@@ -2,6 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../component/Home.vue'
 import Login from '../component/Login.vue'
+import Users from '../component/Users'
+import Roles from '../component/Roles.vue'
+import Rights from '../component/Rights.vue'
 
 Vue.use(VueRouter)
 
@@ -9,7 +12,13 @@ const router = new VueRouter({
   routes: [
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
-    { path: '/home', component: Home }
+    { path: '/home',
+      component: Home,
+      children: [
+        { path: '/users', component: Users },
+        { path: '/roles', component: Roles },
+        { path: '/rights', component: Rights }
+      ] }
 
   ]
 })
@@ -27,3 +36,7 @@ router.beforeEach(function (to, from, next) {
   }
 })
 export default router
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
